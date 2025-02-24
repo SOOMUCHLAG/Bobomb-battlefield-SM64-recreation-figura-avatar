@@ -4,6 +4,7 @@ local math_max = math.max
 local math_floor = math.floor
 local math_ceil = math.ceil
 local math_clamp = math.clamp
+local isCrouching = false
 --old controls
 --[[local w = keybinds:newKeybind("Keybind Name", "key.keyboard.i")
 w.press = function()
@@ -166,6 +167,7 @@ function VectorToAngles(dir)
 end
 slidingTimer = 0
 zButton = false
+
 standingOnSeesaw = false
 sliding = false
 jumpStreak = 0
@@ -342,6 +344,7 @@ end
 ]]
 grounded3 = 0
 local tripleJumpThreshold = 0.7
+
 local longJumpThreshold = 0.45
 local playerRot = 70
 local deltaRot = vec(0,0,0)
@@ -402,7 +405,13 @@ end
 end  
 if keybindState1 then
  -- playerVel:add(0,acceleration,0)
-end  
+end
+
+if zButton and playerVel.x_z:length() < longJumpThreshold and grounded then
+  isCrouching = true
+else
+  isCrouching = false
+end
 
 if zButton and keybindState2 and grounded and playerVel.x_z:length() > longJumpThreshold then
 
@@ -471,11 +480,6 @@ if keybindStaterot4 then
 
 
 
-
-
-
-
-
 local sindivedbyonepointfive = math.sin((world.getTime()/1.5))
 local sindivedbysevenpointfive = math.sin(world.getTime()/7.5)
 local playervelxzlength = math.clamp(playerVel.x_z:length(),0,1)
@@ -535,6 +539,7 @@ if playerVel.x_z:length() ~= 0 then
   end
   end
   deltaRot = deltaRot - rotation
+  if not isCrouching then 
   if not sliding then
 if jumpTimer < 0 then
   if grounded3 <= 20 and playerVel.x_z:length()>0.15 and jumpTimer <0 then
@@ -574,6 +579,9 @@ if jumpTimer < 0 then
     mario.armR1.rotation.y = (sindivedbyonepointfive*playervelxzlength*40)+rotation.y
     mario.armR2.rotation.y = (sindivedbyonepointfive*playervelxzlength*60)+rotation.y
     mario.fistR.rotation.y = (sindivedbyonepointfive*playervelxzlength*60)+rotation.y
+    mario.armR1.rotation.x = 40+sindivedbyonepointfive+playerRot
+    mario.armR2.rotation.x = 40+sindivedbyonepointfive+playerRot
+    mario.fistR.rotation.x = 40+sindivedbyonepointfive+playerRot
     mario.head.translation.y=mario.head.translation.y+math.sin(world.getTime()/1.5)*0.15*playervelxzlength
     mario.torso1.translation.y=mario.torso1.translation.y+math.sin(world.getTime()/1.5)*0.15*playervelxzlength
     mario.torso2.translation.y=mario.torso2.translation.y+math.sin(world.getTime()/1.5)*0.15*playervelxzlength
@@ -608,6 +616,15 @@ if jumpTimer < 0 then
     mario.legL1.rotation.x = 0
     mario.legL2.rotation.x = 0
     mario.bootL.rotation.x = 0
+
+
+    mario.armR1.rotation.x = 0
+    mario.armR2.rotation.x = 0
+    mario.fistR.rotation.x = 0
+
+    mario.armL1.rotation.x = 0
+    mario.armL2.rotation.x = 0
+    mario.fistL.rotation.x = 0
   end
 
 else
@@ -816,6 +833,43 @@ jumpStreak = 0
 jumpTimer = 0
 
   
+end
+else
+  mario.head.translation.y=mario.head.translation.y+sindivedbysevenpointfive*0.1
+  mario.head.rotation.x=9+sindivedbysevenpointfive*9.5+playerRot
+  mario.torso1.translation.y=mario.torso1.translation.y+sindivedbysevenpointfive*0.1
+  mario.torso2.translation.y=mario.torso2.translation.y+sindivedbysevenpointfive*0.1
+
+  
+
+  mario.armR1.translation.y=mario.armR1.translation.y+sindivedbysevenpointfive*0.1
+  mario.armR2.translation.y=mario.armR2.translation.y+sindivedbysevenpointfive*0.1
+  mario.fistR.translation.y=mario.fistR.translation.y+sindivedbysevenpointfive*0.1
+  mario.armR1.rotation.x = 180
+  mario.armR2.rotation.x = 180
+  mario.fistR.rotation.x = 180
+
+  mario.armL1.translation.y=mario.armL1.translation.y+sindivedbysevenpointfive*0.1
+  mario.armL2.translation.y=mario.armL2.translation.y+sindivedbysevenpointfive*0.1
+  mario.fistL.translation.y=mario.fistL.translation.y+sindivedbysevenpointfive*0.1
+  mario.armL1.rotation.x = 180
+  mario.armL2.rotation.x = 180
+  mario.fistL.rotation.x = 180
+
+
+  mario.legR1.rotation.x = 30
+  mario.legR1.pivot.y = mario.legR1.pivot.y+0.07
+  mario.legR1.translation.y = mario.legR1.translation.y+0.07
+  mario.legR2.rotation.x = -30
+  mario.bootR.rotation.x = -20
+
+  mario.legL1.rotation.x = 30
+  mario.legL1.pivot.y = mario.legL1.pivot.y+0.07
+  mario.legL1.translation.y = mario.legL1.translation.y+0.07
+  mario.legL2.rotation.x = -30
+  mario.bootL.rotation.x = -20
+
+
 end
 
 
