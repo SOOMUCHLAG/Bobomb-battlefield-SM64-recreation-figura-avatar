@@ -836,38 +836,39 @@ jumpTimer = 0
 end
 else
   mario.head.translation.y=mario.head.translation.y+sindivedbysevenpointfive*0.1
-  mario.head.rotation.x=9+sindivedbysevenpointfive*9.5+playerRot
+  mario.head.rotation.x=9+sindivedbysevenpointfive*9.5+playerRot+40
   mario.torso1.translation.y=mario.torso1.translation.y+sindivedbysevenpointfive*0.1
+  mario.torso1.rotation.x = 40
   mario.torso2.translation.y=mario.torso2.translation.y+sindivedbysevenpointfive*0.1
+  mario.torso2.rotation.x = 40
 
   
 
   mario.armR1.translation.y=mario.armR1.translation.y+sindivedbysevenpointfive*0.1
   mario.armR2.translation.y=mario.armR2.translation.y+sindivedbysevenpointfive*0.1
   mario.fistR.translation.y=mario.fistR.translation.y+sindivedbysevenpointfive*0.1
-  mario.armR1.rotation.x = 180
-  mario.armR2.rotation.x = 180
-  mario.fistR.rotation.x = 180
+  mario.armR1.rotation.x = 180+40
+  mario.armR2.rotation.x = 180+40
+  mario.fistR.rotation.x = 180+40
 
   mario.armL1.translation.y=mario.armL1.translation.y+sindivedbysevenpointfive*0.1
   mario.armL2.translation.y=mario.armL2.translation.y+sindivedbysevenpointfive*0.1
   mario.fistL.translation.y=mario.fistL.translation.y+sindivedbysevenpointfive*0.1
-  mario.armL1.rotation.x = 180
-  mario.armL2.rotation.x = 180
-  mario.fistL.rotation.x = 180
+  mario.armL1.rotation.x = 180+40
+  mario.armL2.rotation.x = 180+40
+  mario.fistL.rotation.x = 180+40
 
 
-  mario.legR1.rotation.x = 30
-  mario.legR1.pivot.y = mario.legR1.pivot.y+0.07
-  mario.legR1.translation.y = mario.legR1.translation.y+0.07
-  mario.legR2.rotation.x = -30
-  mario.bootR.rotation.x = -20
+  mario.legR1.rotation.x = -90
+  mario.legR1.pivot.y = mario.legR1.pivot.y+0.4
 
-  mario.legL1.rotation.x = 30
-  mario.legL1.pivot.y = mario.legL1.pivot.y+0.07
-  mario.legL1.translation.y = mario.legL1.translation.y+0.07
-  mario.legL2.rotation.x = -30
-  mario.bootL.rotation.x = -20
+  mario.legR1.translation = mario.legR1.translation + vectors.angleToDir(rotation._y)*0.6
+
+
+  mario.legL1.rotation.x = -90
+  mario.legL1.pivot.y = mario.legL1.pivot.y+0.4
+  mario.legL1.translation = mario.legL1.translation + vectors.angleToDir(rotation._y)*0.6
+
 
 
 end
