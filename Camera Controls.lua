@@ -187,15 +187,14 @@ local timer = 0
 function updateCameraOrientation(yaw, pitch)
     local direction = vec(0, 0, 0)
 
-    -- Calculate the forward direction based on yaw and pitch
+
     direction.x = math.cos(math.rad(yaw)) * math.cos(math.rad(pitch))
     direction.y = math.sin(math.rad(pitch))
     direction.z = math.sin(math.rad(yaw)) * math.cos(math.rad(pitch))
 
-    -- Normalize the direction vector
+
     direction:normalize()
 
-    -- Update camera orientation here, using your graphics engine's functions
     lookDir = direction
 end
 
@@ -344,7 +343,7 @@ end
 ]]
 grounded3 = 0
 local tripleJumpThreshold = 0.7
-
+local velDir = vec(0,0,0)
 local longJumpThreshold = 0.45
 local playerRot = 70
 local deltaRot = vec(0,0,0)
@@ -491,8 +490,11 @@ local playervelxzlength = math.clamp(playerVel.x_z:length(),0,1)
 
 
 
+
 if playerVel:length() < 0.01 then
   playerVel = vec(0,0,0)
+else
+  velDir = playerVel:normalized()
 end
 if not standingOnSeesaw then
 playerVel = playerVel+gravity
@@ -835,39 +837,49 @@ jumpTimer = 0
   
 end
 else
-  mario.head.translation.y=mario.head.translation.y+sindivedbysevenpointfive*0.1
+  mario.head.translation.y=mario.head.translation.y+0.500+sindivedbysevenpointfive*0.1
+  mario.head.pivot.y=mario.head.pivot.y+0.500+sindivedbysevenpointfive*0.1
   mario.head.rotation.x=9+sindivedbysevenpointfive*9.5+playerRot+40
-  mario.torso1.translation.y=mario.torso1.translation.y+sindivedbysevenpointfive*0.1
+  mario.torso1.translation.y=mario.torso1.translation.y+0.500+sindivedbysevenpointfive*0.1
+  mario.torso1.pivot.y=mario.torso1.pivot.y+0.500+sindivedbysevenpointfive*0.1
   mario.torso1.rotation.x = 40
-  mario.torso2.translation.y=mario.torso2.translation.y+sindivedbysevenpointfive*0.1
+  mario.torso2.translation.y=mario.torso2.translation.y+0.500+sindivedbysevenpointfive*0.1
+  mario.torso2.pivot.y=mario.torso2.pivot.y+0.500+sindivedbysevenpointfive*0.1
   mario.torso2.rotation.x = 40
 
   
 
-  mario.armR1.translation.y=mario.armR1.translation.y+sindivedbysevenpointfive*0.1
-  mario.armR2.translation.y=mario.armR2.translation.y+sindivedbysevenpointfive*0.1
-  mario.fistR.translation.y=mario.fistR.translation.y+sindivedbysevenpointfive*0.1
+  mario.armR1.translation.y=mario.armR1.translation.y+0.500+sindivedbysevenpointfive*0.1
+  mario.armR2.translation.y=mario.armR2.translation.y+0.500+sindivedbysevenpointfive*0.1
+  mario.fistR.translation.y=mario.fistR.translation.y+0.500+sindivedbysevenpointfive*0.1
+  mario.armR1.pivot.y=mario.armR1.pivot.y+0.500+sindivedbysevenpointfive*0.1
+  mario.armR2.pivot.y=mario.armR2.pivot.y+0.500+sindivedbysevenpointfive*0.1
+  mario.fistR.pivot.y=mario.fistR.pivot.y+0.500+sindivedbysevenpointfive*0.1
   mario.armR1.rotation.x = 180+40
   mario.armR2.rotation.x = 180+40
   mario.fistR.rotation.x = 180+40
 
-  mario.armL1.translation.y=mario.armL1.translation.y+sindivedbysevenpointfive*0.1
-  mario.armL2.translation.y=mario.armL2.translation.y+sindivedbysevenpointfive*0.1
-  mario.fistL.translation.y=mario.fistL.translation.y+sindivedbysevenpointfive*0.1
+  mario.armL1.translation.y=mario.armL1.translation.y+0.500+sindivedbysevenpointfive*0.1
+  mario.armL2.translation.y=mario.armL2.translation.y+0.500+sindivedbysevenpointfive*0.1
+  mario.fistL.translation.y=mario.fistL.translation.y+0.500+sindivedbysevenpointfive*0.1
+  mario.armL1.pivot.y=mario.armL1.pivot.y+0.500+sindivedbysevenpointfive*0.1
+  mario.armL2.pivot.y=mario.armL2.pivot.y+0.500+sindivedbysevenpointfive*0.1
+  mario.fistL.pivot.y=mario.fistL.pivot.y+0.500+sindivedbysevenpointfive*0.1
   mario.armL1.rotation.x = 180+40
   mario.armL2.rotation.x = 180+40
   mario.fistL.rotation.x = 180+40
 
 
   mario.legR1.rotation.x = -90
-  mario.legR1.pivot.y = mario.legR1.pivot.y+0.4
-
-  mario.legR1.translation = mario.legR1.translation + vectors.angleToDir(rotation._y)*0.6
+  mario.legR1.rotation.y =   rotation.y-25
+  mario.legR1.pivot = mario.legR1.pivot + velDir.x_z*-0.4+ vec(0,0.89+sindivedbysevenpointfive*0.05,0)
+  mario.legR1.translation = mario.legR1.translation + velDir.x_z*-0.4+ vec(0,0.89+sindivedbysevenpointfive*0.05,0)
 
 
   mario.legL1.rotation.x = -90
-  mario.legL1.pivot.y = mario.legL1.pivot.y+0.4
-  mario.legL1.translation = mario.legL1.translation + vectors.angleToDir(rotation._y)*0.6
+  mario.legL1.rotation.y =   rotation.y+25
+  mario.legL1.pivot = mario.legL1.pivot + velDir.x_z*-0.4 + vec(0,0.89+sindivedbysevenpointfive*0.05,0)
+  mario.legL1.translation = mario.legL1.translation + velDir.x_z*-0.4+ vec(0,0.89+sindivedbysevenpointfive*0.05,0)
 
 
 
@@ -970,25 +982,20 @@ end
   local seesawRotationLimit = 50
 local seesawRotation = 0
 local seesawDir = vectors.angleToDir(0,43)
-  -- Sphere-Triangle collision and resolution function
+
 function sphereTriangleCollision(sphereCenter, sphereRadius, v0, v1, v2,i)
-  -- Step 1: Calculate triangle normal
+
 
   local triangleNormal = (v1 - v0):crossed(v2 - v0):normalize()
 
-
-  -- Step 3: Check if the projected point is within the triangle using barycentric coordinates
   if pointInTriangle( (sphereCenter- triangleNormal* (sphereCenter - v0):dot(triangleNormal)), v0, v1, v2) then
-      -- Step 4: Calculate the distance from the sphere's center to the plane
+
       local distanceToPlane = (sphereCenter- v0):dot(triangleNormal)
 
-      -- Step 5: If the distance is less than the sphere's radius, resolve the collision
       if math_abs(distanceToPlane) < sphereRadius then
 
-          -- Move the sphere along the normal of the triangle to push it out of the collision
           local moveDirection = triangleNormal* (sphereRadius - math_abs(distanceToPlane))
 
-          -- Move the sphere's center out of the triangle plane
 
           if i == 7 then
             
@@ -999,7 +1006,7 @@ function sphereTriangleCollision(sphereCenter, sphereRadius, v0, v1, v2,i)
           groundNormal = triangleNormal
           else
             sphereCenter = sphereCenter+ moveDirection._y_
-          if math.deg(math.acos(triangleNormal:dot(vec(0,-1,0))))<72 then  -- Arbitrary threshold, adjust based on your use case
+          if math.deg(math.acos(triangleNormal:dot(vec(0,-1,0))))<72 then  
           groundNormal = triangleNormal
           if slidingTimer <= 0 then
             grounded = true
@@ -1041,7 +1048,6 @@ function sphereTriangleCollision(sphereCenter, sphereRadius, v0, v1, v2,i)
       end
   end
 
-  -- Step 6: Return the adjusted sphere center
   return sphereCenter
 end
 
