@@ -493,7 +493,8 @@ local playervelxzlength = math.clamp(playerVel.x_z:length(),0,1)
 
 if playerVel:length() < 0.01 then
   playerVel = vec(0,0,0)
-else
+end
+if playerVel.x_z:length() > 0.01 then
   velDir = playerVel:normalized()
 end
 if not standingOnSeesaw then
@@ -607,6 +608,17 @@ if jumpTimer < 0 then
     mario.armL1.rotation.y = -16.5-sindivedbysevenpointfive*16.5+rotation.y
     mario.armL2.rotation.y = -16.5-sindivedbysevenpointfive*16.5+rotation.y
     mario.fistL.rotation.y = -16.5-sindivedbysevenpointfive*16.5+rotation.y
+
+
+
+    mario.torso1.rotation.z=math.clamp(deltaRot.y*10,-25,25)
+    mario.torso1.rotation.x=math.clamp(deltaRot.y*0,-40,40)+playerRot
+
+    mario.torso2.rotation.z=math.clamp(deltaRot.y*10,-25,25)
+    mario.torso2.rotation.x=math.clamp(deltaRot.y*0,-40,40)+playerRot
+
+    mario.head.rotation.z=math.clamp(deltaRot.y*10,-25,25)
+    mario.head.rotation.x=math.clamp(deltaRot.y*0,-40,40)+playerRot
 
 
 
@@ -801,7 +813,19 @@ else
   end
 end
 else
+  for i, mariopart in pairs(mario) do
+    mariopart.translation = cameraPos:copy()-vec(0,2.5,0)
+    mariopart.pivot = cameraPos:copy()-vec(0,1,0)
+    mariopart.lookAtMode = 1
+if grounded then
+mariopart.lookAt = vec(groundNormal.x,-groundNormal.z,groundNormal.y)
+end
+if playerVel.x_z:length() ~= 0 then
+  rotation = VectorToAngles(-playerVel.x_z:normalized())+vec(playerRot,180,0)
 
+  mariopart.rotation = rotation
+  end
+  end
   sounds:playSound("slide"..math.random(1,7), player:getPos(),0.1)
   mario.legR1.rotation.x = 90
   mario.legR2.rotation.x = 90
@@ -836,7 +860,18 @@ jumpTimer = 0
 
   
 end
-else
+elseif grounded then
+
+  for i, mariopart in pairs(mario) do
+    mariopart.translation = cameraPos:copy()-vec(0,2.5,0)
+    mariopart.pivot = cameraPos:copy()-vec(0,1,0)
+    mariopart.lookAtMode = 1
+    mariopart.up = vec(0,1,0)
+if grounded then
+mariopart.lookAt = vec(groundNormal.x,-groundNormal.z,groundNormal.y)
+end
+  end
+
   mario.head.translation.y=mario.head.translation.y+0.500+sindivedbysevenpointfive*0.1
   mario.head.pivot.y=mario.head.pivot.y+0.500+sindivedbysevenpointfive*0.1
   mario.head.rotation.x=9+sindivedbysevenpointfive*9.5+playerRot+40
@@ -881,11 +916,20 @@ else
   mario.legL1.pivot = mario.legL1.pivot + velDir.x_z*-0.4 + vec(0,0.89+sindivedbysevenpointfive*0.05,0)
   mario.legL1.translation = mario.legL1.translation + velDir.x_z*-0.4+ vec(0,0.89+sindivedbysevenpointfive*0.05,0)
 
+  mario.legL2.pivot = mario.legL2.pivot + velDir.x_z*0.45 + vec(-velDir.z,velDir.y,velDir.x)*0.9
+  mario.legL2.translation = mario.legL2.translation + velDir.x_z*0.45 + vec(-velDir.z,velDir.y,velDir.x)*0.9
 
+  mario.legR2.pivot = mario.legR2.pivot + velDir.x_z*0.45 - vec(-velDir.z,velDir.y,velDir.x)*0.9
+  mario.legR2.translation = mario.legR2.translation + velDir.x_z*0.45 - vec(-velDir.z,velDir.y,velDir.x)*0.9
 
+  mario.bootL.pivot = mario.bootL.pivot + velDir.x_z*0.45 + vec(-velDir.z,velDir.y,velDir.x)*0.9
+  mario.bootL.translation = mario.bootL.translation + velDir.x_z*0.45 + vec(-velDir.z,velDir.y,velDir.x)*0.9
+
+  mario.bootR.pivot = mario.bootR.pivot + velDir.x_z*0.45 - vec(-velDir.z,velDir.y,velDir.x)*0.9
+  mario.bootR.translation = mario.bootR.translation + velDir.x_z*0.45 - vec(-velDir.z,velDir.y,velDir.x)*0.9
 end
 
-
+log(jumpStreak,jumpTimer,grounded,grounded3,velDir,sindivedbysevenpointfive)
 if grounded then
 playerVel:mul(friction-0.24,friction,friction-0.24)
 elseif sliding then
