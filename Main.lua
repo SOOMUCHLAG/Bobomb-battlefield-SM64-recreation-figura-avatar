@@ -267,7 +267,7 @@ local onevec = vec(0, 0, 1)
 local lightDirection = vec(-1,-2,-3):normalize()
 local up = vec(0,1,0)
 local colthreshold = 75
-local renderthreshold = 105
+local renderthreshold = 145
 cameraPosWithOffset = vec(0,0,0)
 staticMeshes = {}
 --calculates the vertices for a static mesh 
@@ -399,15 +399,15 @@ for i, tbl in pairs(mesh) do
 
 
 
-  local averagedist
 
-averagedist = (((triga+trimult2+trimult3)*0.33333333)-cameraPosWithOffset):length()
+    local averagedist = (((triga+trimult2+trimult3)*0.33333333)-cameraPosWithOffset):length()
 
 
 if averagedist<renderthreshold then
 
   if  collision and  averagedist<colthreshold then
-    colTris[i][#colTris[i]+1] = {triga,trimult2,trimult3}
+    local coltrii = colTris[i]
+    coltrii[#coltrii+1] = {triga,trimult2,trimult3}
     end
 if noLighting then
   illumination = 2
