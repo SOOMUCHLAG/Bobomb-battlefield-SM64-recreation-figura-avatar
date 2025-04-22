@@ -316,6 +316,8 @@ end
 
 --rendering code
 function events.tick()
+  updateCameraOrientation(yaw, pitch)
+  clearScreen()
 colTris = {}
   local halfwidthheightvec = vec(width,height,1)*0.5
   local viewMat = QuickInverse(pointAtMatrix(cameraPosWithOffset,cameraPosWithOffset+lookDir,up))
@@ -326,7 +328,7 @@ colTris = {}
     end
   end
 --clearing the screen
-clearScreen()
+
 
 --Drawing every mesh
 for i, tbl in pairs(mesh) do
@@ -475,11 +477,11 @@ end
 for i = 1, width do
 
   for j = 1, height do
-    Screens[1].screenText:setPixel(i-1,j-1,vectors.hsvToRGB(0,0,1-depthBuffer[i][j]/1.5))
+    Screen.screenText:setPixel(i-1,j-1,vectors.hsvToRGB(0,0,1-depthBuffer[i][j]/1.5))
     end
   end]]
 
-Screens[1].screenText:update()  
+Screen.screenText:update()  
 
   for i = 1, height do
     local iInDepthBuffer = depthBuffer[i]

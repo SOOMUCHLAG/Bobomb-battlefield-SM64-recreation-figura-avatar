@@ -1200,6 +1200,28 @@ ironBall1 = {
     texture = textures[""],
     textureName = "bobthebetter.IronBall",
     noLighting = true
+},
+ironBall2 = {
+    modelpart = models.bobthebetter.ironBall,
+    translation = vec(-88.41275, 65.16703, -127.01478) ,
+    rotation = vec(0,0,0),
+    scale = vec(1,1,1)*6,
+    pivot = vec(-88.41275, 65.16703, -127.01478) ,
+    facNums = vec(323,356),
+    texture = textures[""],
+    textureName = "bobthebetter.IronBall",
+    noLighting = true
+},
+ironBall3 = {
+    modelpart = models.bobthebetter.ironBall,
+    translation = vec(-88.41275, 65.16703, -127.01478) ,
+    rotation = vec(0,0,0),
+    scale = vec(1,1,1)*6,
+    pivot = vec(-88.41275, 65.16703, -127.01478) ,
+    facNums = vec(323,356),
+    texture = textures[""],
+    textureName = "bobthebetter.IronBall",
+    noLighting = true
 }
 
 }
@@ -1237,7 +1259,10 @@ goombas ={
     goomba8 = {model = BBmodelToMesh.goomba8,foot1 = BBmodelToMesh.goombaFoot15,foot2 = BBmodelToMesh.goombaFoot16,pos=BBmodelToMesh.goomba8.translation:copy(),angle=0,canJump = 4}
 }
 
-ironBalls = {ironBall1 = {model = BBmodelToMesh.ironBall1,timer = 0, stage = 1, start = 1,timeForStage = 10}}
+ironBalls = {
+ironBall1 = {model = BBmodelToMesh.ironBall1,timer = 0, stage = 1, start = 1,timeForStage = 10},
+ironBall2 = {model = BBmodelToMesh.ironBall2,timer = 5, stage = 3, start = 1,timeForStage = 10},
+ironBall3 = {model = BBmodelToMesh.ironBall3,timer = 0, stage = 6, start = 1,timeForStage = 10}}
 
 
 coins = {
@@ -1512,10 +1537,11 @@ for i, ironBall in pairs(ironBalls) do
         ironBall.timeForStage=ironBallPath[ironBall.stage].time
     end
     ironBall.model.translation = math.lerp(ironBallPath[ironBall.stage].start,ironBallPath[ironBall.stage].dest,(ironBall.timer/ironBall.timeForStage))
-    if dist<105 then
+    local hit, intersection
+if (ironBall.model.translation-cameraPosWithOffset):length()<85 then
         
-        ironBall.model.rotation = -VectorToAngles((cameraPosWithOffset-ironBall.model.translation).x_z)+vec(-90,0,180) 
-        local hit, intersection
+        ironBall.model.rotation = -VectorToAngles((cameraPosWithOffset-ironBall.model.translation).xyz)+vec(-90,0,180) 
+
         for i, mesh in pairs(colTris) do
 
             for k, triTranslated in pairs(mesh) do
@@ -1526,13 +1552,16 @@ for i, ironBall in pairs(ironBalls) do
             end
             if hit then break end
         end
+    end
         if hit then
 
             ironBall.model.translation=intersection-vec(0,3,0)
             ironBall.model.pivot=intersection-vec(0,3,0)
+        else
+            ironBall.model.translation = vec(99999,999999,999999)
         end
 
-    end
+
 end
 for i, tbl in pairs(toDelete) do
     if tbl.timer == 0 then

@@ -1,4 +1,5 @@
 local line = require("Bresenham")
+local Y90degRotMat= matrices.yRotation3(90)
 require("Main")
 local math_abs = math.abs 
 local math_min = math.min
@@ -10,8 +11,10 @@ local nullVector = vec(0,0,0)
 local function cross2D (vec1a,vec2a)
 return vec1a.x*vec2a.y -vec1a.y*vec2a.x
 end  
-
-Screens = {}
+local function dirToAngle(dir)
+  return vec(-math.deg(math.atan2(dir.y, math.sqrt(dir.x * dir.x + dir.z * dir.z))), math.deg(math.atan2(dir.x, dir.z)), 0)
+end
+Screen = {}
 local screenPart = models:newPart("Screen", "WORLD")
 --Creates a screen
 --- @param pos Vec3 Position of the screen
@@ -20,21 +23,24 @@ local screenPart = models:newPart("Screen", "WORLD")
 --- @param height Integer Height of the screen(pixels)
 function createScreen(pos,rot,width,height)
 local screenText = textures:newTexture("screenText",width , height)
-local sprite = screenPart:newSprite("Screen"):setPos(pos*16 + vec(0,100,0)or vec(0,height,0)):setRot(rot or vec(0,0,0)):setTexture(screenText,100,100):setRenderType("EMISSIVE_SOLID"):setRot(0,180,0)
-table.insert(Screens, {sprite = sprite, screenText = screenText,width=width,height= height})
+local sprite = screenPart:newSprite("Screen"):setPos(pos*16 + vec(0,100,0) + vec(0,player:getEyeHeight(),0)*16 + player:getLookDir()*120 + player:getLookDir()*Y90degRotMat*100 or vec(0,height,0)):setRot(rot or vec(0,0,0)):setTexture(screenText,200,200):setRot(dirToAngle(player:getLookDir()))
+local sprite2 = screenPart:newSprite("Screen2"):setPos(pos*16 + vec(0,100,0) + vec(0,player:getEyeHeight(),0)*16 + player:getLookDir()*121 + player:getLookDir()*Y90degRotMat*100 or vec(0,height,0)):setRot(rot or vec(0,0,0)):setTexture(textures["bobthebetter.bck"],200,200):setRegion(354/8,242/2):setRot(dirToAngle(player:getLookDir()))
+Screen = {sprite = sprite, screenText = screenText,width=width,height= height,sprite2=sprite2}
 end
 --Clears the screen
 function clearScreen()
-  for i, screen in pairs(Screens) do
-    screen.screenText:fill(0,0,screen.width,screen.height,0, 165/255, 201/255,0.2)
-  end
+
+
+    Screen.sprite2:setUV(-yaw/360,0.22+pitch/180)
+    Screen.screenText:fill(0,0,Screen.width,Screen.height,0, 165/255, 201/255,0)
+
 end
 --Draws a pixel if its inside of the screen
 --- @param pos Vec2 Position of the pixel
 --- @param rgb Vec3 Color of the pixel
 function drawPix(pos,rgb)
   if pos.x >= 0 and pos.x <= width - 2 and pos.y >= 0 and pos.y <= height-2 then
-  Screens[1].screenText:setPixel(pos.x,pos.y,rgb)
+  Screen.screenText:setPixel(pos.x,pos.y,rgb)
   end
 end
 --I think this calculates the areas of triangles created from a point but idk ai wrote this
@@ -72,7 +78,7 @@ function drawTriangle(pos1, pos2, pos3, color)
     for x = xMin, xMax do
       local lambda1, lambda2, lambda3 = calculateBarycentric(vec(x, y), pos1, pos2, pos3)
       if lambda1 and lambda2 and lambda3 and lambda1 >= 0 and lambda2 >= 0 and lambda3 >= 0 then
-        Screens[1].screenText:setPixel(x, y, color)
+        Screen.screenText:setPixel(x, y, color)
       end
     end
   end
@@ -85,7 +91,7 @@ function drawLine(pos1,pos2,color)
   line.line( math_floor(pos1.x), math_floor(pos1.y), math_floor(pos2.x), math_floor(pos2.y), 
   function( x, y, counter )
     if x >= 1 and x <= width - 2 and y >= 1 and y <= height-2 then
-      Screens[1].screenText:setPixel(x,y,color)
+      Screen.screenText:setPixel(x,y,color)
     end
       return true
   end)
@@ -106,7 +112,7 @@ function drawTexturedTriangle(pos1, pos2, pos3, uv1, uv2, uv3, tex,brightness)
   if uv1.z+0.015 >= depthBuffer[pos1.y][pos1.x] or uv2.z+0.015 >= depthBuffer[pos2.y][pos2.x] or uv3.z+0.015 >= depthBuffer[pos3.y][pos3.x] then
   if (pos1 - pos2):length() >= 1 and (pos1 - pos3):length() >= 1 then
 
-  
+  local sctext = Screen.screenText
   local OptimizedTexture = OptimizedTextures[tex]
   local dimensionxminus2= OptimizedTexture.dimx2
   local clampedBrightness = math_clamp(brightness/1.5,0.3,1)
@@ -213,8 +219,8 @@ function drawTexturedTriangle(pos1, pos2, pos3, uv1, uv2, uv3, tex,brightness)
           local tPrecomputed = t*dimensionxminus2
 
           local color = OptimizedTexture[math_ceil(((texSUPrecomputed + tPrecomputed*texEUminusTexSU)/texW) )][math_ceil(((texSVPrecomputed + tPrecomputed*texEVminusTexSV)/texW ))]
-          if color~= nullVector then
-          Screens[1].screenText:setPixel(j, i, color*clampedBrightness)
+          if color then
+          sctext:setPixel(j, i, color*clampedBrightness)
           depthBufferIndexI[j] = texW
           end
           
@@ -299,8 +305,8 @@ function drawTexturedTriangle(pos1, pos2, pos3, uv1, uv2, uv3, tex,brightness)
 
 
           local color = OptimizedTexture[math_ceil(((texSUPrecomputed + tPrecomputed*texEUminusTexSU)/texW) )][math_ceil(((texSVPrecomputed + tPrecomputed*texEVminusTexSV)/texW ))]
-          if color~= nullVector then
-          Screens[1].screenText:setPixel(j, i, color*clampedBrightness)
+          if color then
+          sctext:setPixel(j, i, color*clampedBrightness)
           depthBufferIndexI[j] = texW
           end
 

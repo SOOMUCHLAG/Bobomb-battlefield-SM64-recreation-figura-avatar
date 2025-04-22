@@ -167,6 +167,7 @@ function VectorToAngles(dir)
 end
 slidingTimer = 0
 zButton = false
+damaged = false
 prevGrounded = false
 standingOnSeesaw = false
 sliding = false
@@ -469,7 +470,6 @@ if keybindStaterot4 then
   end 
   pitch = math.max(-pitchLimit, math.min(pitchLimit, pitch))
 
-  updateCameraOrientation(yaw, pitch)
 
 
   cameraoffset = -lookDir*3.3+ vec(0,-2,0)
